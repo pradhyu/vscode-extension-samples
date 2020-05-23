@@ -3,11 +3,11 @@
 	"displayName": "Custom view Samples",
 	"description": "Samples for VSCode's view API",
 	"version": "0.0.1",
-	"publisher": "ms-vscode",
-	"engines": {
-		"vscode": "^1.23.0"
-	},
+	"publisher": "vscode-samples",
 	"enableProposedApi": true,
+	"engines": {
+		"vscode": "^1.42.0"
+	},
 	"categories": [
 		"Other"
 	],
@@ -15,10 +15,13 @@
 		"onView:nodeDependencies",
 		"onView:ftpExplorer",
 		"onView:jsonOutline",
+		"onView:fileExplorer",
+		"onView:testView",
 		"onLanguage:json",
-		"onLanguage:jsonc"
+		"onLanguage:jsonc",
+		"onCommand:sample.reveal"
 	],
-	"main": "./out/src/extension",
+	"main": "./out/extension.js",
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
@@ -45,20 +48,36 @@
 				{
 					"id": "ftpExplorer",
 					"name": "FTP Explorer"
+				},
+				{
+					"id": "fileExplorer",
+					"name": "File Explorer"
+				},
+				{
+					"id": "testView",
+					"name": "Test View"
 				}
 			]
 		},
 		"commands": [
-			{
-				"command": "nodeDependencies.addEntry",
-				"title": "Add"
-			},
 			{
 				"command": "nodeDependencies.refreshEntry",
 				"title": "Refresh",
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "nodeDependencies.addEntry",
+				"title": "Add"
+			},
+			{
+				"command": "nodeDependencies.editEntry",
+				"title": "Edit",
+				"icon": {
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
 				}
 			},
 			{
@@ -100,6 +119,26 @@
 			{
 				"command": "jsonOutline.renameNode",
 				"title": "Rename"
+			},
+			{
+				"command": "fileExplorer.refreshFile",
+				"title": "Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "fileExplorer.openFile",
+				"title": "Open File"
+			},
+			{
+				"command": "testView.reveal",
+				"title": "Test View: Reveal"
+			},
+			{
+				"command": "testView.changeTitle",
+				"title": "Test View: Change Title"
 			}
 		],
 		"menus": {
@@ -110,11 +149,6 @@
 			],
 			"view/title": [
 				{
-					"command": "jsonOutline.refresh",
-					"when": "view == jsonOutline",
-					"group": "navigation"
-				},
-				{
 					"command": "nodeDependencies.refreshEntry",
 					"when": "view == nodeDependencies",
 					"group": "navigation"
@@ -124,12 +158,22 @@
 					"when": "view == nodeDependencies"
 				},
 				{
+					"command": "jsonOutline.refresh",
+					"when": "view == jsonOutline",
+					"group": "navigation"
+				},
+				{
 					"command": "ftpExplorer.refresh",
 					"when": "view == ftpExplorer",
 					"group": "navigation"
 				}
 			],
 			"view/item/context": [
+				{
+					"command": "nodeDependencies.editEntry",
+					"when": "view == nodeDependencies && viewItem == dependency",
+					"group": "inline"
+				},
 				{
 					"command": "nodeDependencies.deleteEntry",
 					"when": "view == nodeDependencies && viewItem == dependency"
@@ -141,6 +185,11 @@
 				{
 					"command": "jsonOutline.refreshNode",
 					"when": "view == jsonOutline",
+					"group": "inline"
+				},
+				{
+					"command": "fileExplorer.refreshFile",
+					"when": "view == fileExplorer && viewItem == file",
 					"group": "inline"
 				}
 			]
@@ -158,18 +207,22 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install"
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
-		"typescript": "^2.1.4",
-		"vscode": "^1.1.17",
-		"@types/node": "*"
+		"@types/mkdirp": "^0.5.2",
+		"@types/node": "^12.12.0",
+		"@types/rimraf": "^2.0.2",
+		"@types/vscode": "^1.42.0",
+		"typescript": "^3.8.3",
+		"tslint": "^5.12.1"
 	},
 	"dependencies": {
 		"jsonc-parser": "^0.4.2",
 		"ftp": "^0.3.10",
-		"jsftp": "^2.0.0"
+		"mkdirp": "^0.5.1",
+		"rimraf": "^2.6.2"
 	}
 }
